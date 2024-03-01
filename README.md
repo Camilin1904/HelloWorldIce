@@ -1,3 +1,5 @@
+### By: Camilo Carmona Valencia and Juan Sebastian Libreros
+
 # Steps to deploy and execute the app
 
 ## Local machines
