@@ -1,15 +1,37 @@
+import Demo.CallbackPrx;
+import Demo.Response;
 import com.zeroc.Ice.Current;
 
 import java.io.*;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PrinterI implements Demo.Printer{
-    public String printString(String s, Current current){
-        String[] info = s.split(":",3);
 
-        String[] ans = processS(info[2]);
-        System.out.println(info[0] + ":" + info[1] + ":" + ans[0]);
-        System.out.println("\n");
-        return info[0] + ":" + info[1] + ":" + ans[1];
+    /*
+        Because of the need of accessibility to all clients from any other client
+        a hash map is implemented for ease of access, ConcurrentHashMap was chosen
+        as it is not susceptible to corruption in a multithreaded environment
+        and has a higher throughput than equivalents like HashTable
+    */
+    private Map<String, CallbackPrx> clients = new ConcurrentHashMap<>();
+    public void printString(String s, CallbackPrx client, Current current){
+
+        new Thread(()-> {
+
+            String[] info = s.split(":", 3);
+            String newClient = info[0] + ":" + info[1];
+
+            clients.putIfAbsent(newClient, client);
+
+            String[] ans = processS(info[2]);
+            System.out.println(info[0] + ":" + info[1] + ":" + ans[0]);
+            System.out.println("\n");
+            client.callbackClient(new Response(0,(info[0] + ":" + info[1] + ":" + ans[0])));
+        }).run();
     }
 
     public String[] processS(String s){
@@ -35,6 +57,17 @@ public class PrinterI implements Demo.Printer{
             }
             else if(s.startsWith("listports")){
                 s = runCommand("nmap " + s2[1]);
+            }
+            else if (s.startsWith("list clients")){
+                String ret = "";
+                for(Map.Entry<String, CallbackPrx> client : clients.entrySet()){
+                    ret += client.getKey() + "\n";
+                }
+                s = ret;
+            }
+            else if (s.startsWith("to ")){
+                s2 = s.split(" ",3);
+                clients.get(s2[1]).callbackClient(new Response(0, s2[2]));
             }
         }
         catch (Exception e){
@@ -69,12 +102,21 @@ public class PrinterI implements Demo.Printer{
     }
 
 
-    private String seqFib(int n){
+    private static String seqFib(int n){
         String end = "";
+        BigInteger current = new BigInteger(1+"");
+        BigInteger prev = new BigInteger(1+"");
         for (int i=0; i<n; i++){
-            end += fibonacci(i) + " ";
+            if (i<=1) end += "1 ";
+            else{
+                BigInteger holder = current.add(prev);
+                prev = new BigInteger(current.toString());
+                end += (holder) + " ";
+                current = holder;
+            }
+
         }
-        return end.trim();
+        return end;
     }
 
 

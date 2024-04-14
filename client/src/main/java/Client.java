@@ -1,3 +1,6 @@
+import Demo.CallbackPrx;
+import com.zeroc.Ice.ObjectPrx;
+
 import java.util.Scanner;
 import java.net.InetAddress;
 
@@ -11,16 +14,23 @@ public class Client
         try(com.zeroc.Ice.Communicator communicator = com.zeroc.Ice.Util.initialize(args,"config.client",extraArgs))
         {
             //com.zeroc.Ice.ObjectPrx base = communicator.stringToProxy("SimplePrinter:default -p 10000");
-            Demo.PrinterPrx twoway = Demo.PrinterPrx.checkedCast(
-                communicator.propertyToProxy("Printer.Proxy")).ice_twoway().ice_secure(false);
+            Demo.PrinterPrx service = Demo.PrinterPrx.checkedCast(
+                communicator.propertyToProxy("Printer.Proxy")).ice_twoway().ice_timeout(-1).ice_secure(false);
             //Demo.PrinterPrx printer = Demo.PrinterPrx.checkedCast(base);
-            Demo.PrinterPrx printer = twoway;
+            Demo.PrinterPrx printer = service;
 
             if(printer == null)
             {
                 throw new Error("Invalid proxy");
             }
             String input="";
+
+            com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Callback");
+            com.zeroc.Ice.Object object = new CallbackImpl();
+            ObjectPrx prx = adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("CallbackService"));
+            adapter.activate();
+
+            CallbackPrx clprx=CallbackPrx.uncheckedCast(prx);
             while(true){
                 input = scan.nextLine();
                 if(input.equals("exit")) break;
@@ -32,8 +42,8 @@ public class Client
                     System.err.println(E.getMessage());
                 }
                 input = System.getProperty("user.name") + ":" + SystemName + ":" + input;
-                String res = printer.printString(input);
-                System.out.println(res);
+                printer.printString(input, clprx);
+                //System.out.println(res);
             }
 
         }
