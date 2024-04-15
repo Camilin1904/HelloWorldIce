@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class Server
@@ -11,21 +12,20 @@ public class Server
 
         try(com.zeroc.Ice.Communicator communicator = com.zeroc.Ice.Util.initialize(args,"config.server",extraArgs))
         {
-            if(!extraArgs.isEmpty())
-            {
-                System.err.println("too many arguments");
-                for(String v:extraArgs){
-                    System.out.println(v);
-                }
-            }
+            AtomicInteger leftover = new AtomicInteger(0);
+            AtomicInteger processed = new AtomicInteger(0);
             com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Printer");
-            com.zeroc.Ice.Object object = new PrinterI();
+            com.zeroc.Ice.Object object = new PrinterI(leftover, processed);
             adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("SimplePrinter"));
             adapter.activate();
-            while(true){
-                if(scan.nextLine().equals("exit"))
-                    communicator.shutdown();
+            if(extraArgs.isEmpty()) {
+
+                communicator.waitForShutdown();
             }
+            else{
+
+            }
+
         }
     }
 

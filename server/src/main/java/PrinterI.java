@@ -6,9 +6,14 @@ import java.io.*;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PrinterI implements Demo.Printer{
+
+    AtomicInteger inProgress;
+    AtomicInteger processed;
 
     /*
         Because of the need of accessibility to all clients from any other client
@@ -16,24 +21,33 @@ public class PrinterI implements Demo.Printer{
         as it is not susceptible to corruption in a multithreaded environment
         and has a higher throughput than equivalents like HashTable
     */
-
-    private AtomicInteger inProgress = new AtomicInteger(0);
-    private AtomicInteger processed = new AtomicInteger(0);
     private Map<String, CallbackPrx> clients = new ConcurrentHashMap<>();
+
+    private ExecutorService threadpool = Executors.newFixedThreadPool(6);
+
+    public PrinterI(AtomicInteger inProgress, AtomicInteger processed){
+        this.inProgress = inProgress;
+        this.processed = processed;
+    }
     public void printString(String s, CallbackPrx client, Current current){
 
-        new Thread(()-> {
+
+
+        Runnable task = new Thread(()-> {
             inProgress.addAndGet(1);
             String[] info = s.split(":", 3);
             String newClient = info[0] + ":" + info[1];
             clients.putIfAbsent(newClient, client);
             inProgress.addAndGet(-1);
             processed.addAndGet(1);
-            String[] ans = processS(info[2]);
+            String[] query = info[2].split(";Time:", 2);
+            String[] ans = processS(query[0]);
             System.out.println(info[0] + ":" + info[1] + ":" + ans[0]);
             System.out.println("\n");
-            client.callbackClient(new Response(0,(info[0] + ":" + info[1] + ":" + ans[1])));
-        }).run();
+            client.callbackClient(new Response(0,(info[0] + ":" + info[1] + ":" + ans[1] + ";Time:" + query[1])));
+        });
+
+        threadpool.submit(task);
     }
 
     public String[] processS(String s){

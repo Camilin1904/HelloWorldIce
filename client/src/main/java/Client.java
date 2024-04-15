@@ -15,7 +15,7 @@ public class Client
         {
             //com.zeroc.Ice.ObjectPrx base = communicator.stringToProxy("SimplePrinter:default -p 10000");
             Demo.PrinterPrx service = Demo.PrinterPrx.checkedCast(
-                communicator.propertyToProxy("Printer.Proxy")).ice_twoway().ice_timeout(10000).ice_secure(false);
+                communicator.propertyToProxy("Printer.Proxy")).ice_twoway().ice_timeout(-1).ice_secure(false);
             //Demo.PrinterPrx printer = Demo.PrinterPrx.checkedCast(base);
             Demo.PrinterPrx printer = service;
 
@@ -32,7 +32,8 @@ public class Client
 
             CallbackPrx clprx=CallbackPrx.uncheckedCast(prx);
             while(true){
-                input = "10000";
+                input = scan.nextLine();
+                long time = System.currentTimeMillis();
                 if(input.equals("exit")) break;
                 String SystemName = "";
                 try {
@@ -41,9 +42,9 @@ public class Client
                 catch (Exception E) {
                     System.err.println(E.getMessage());
                 }
-                input = System.getProperty("user.name") + ":" + SystemName + ":" + input;
+                input = System.getProperty("user.name") + ":" + SystemName + ":" + input + ";Time:" + time;
                 printer.printString(input, clprx);
-                //System.out.println(res);hj
+                //System.out.println(res);
             }
 
         }

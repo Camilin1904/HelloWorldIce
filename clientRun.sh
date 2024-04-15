@@ -1,3 +1,3 @@
 #!/usr/bin/expect -f
 cd Documents/CarmonaLibrerosCallback
-java -jar client.jar <<< "1000"
+java -jar client.jar <<< "10000"

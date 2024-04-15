@@ -1,0 +1,15 @@
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid2:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid3:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid4:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid5:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid6:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid7:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid8:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid9:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid10:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid11:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid13:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid15:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid17:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid21:/home/swarch/Documents/CarmonaLibrerosCallback/    
+pscp.exe -pw swarch client/build/libs/client.jar  swarch@xhgrid22:/home/swarch/Documents/CarmonaLibrerosCallback/   
