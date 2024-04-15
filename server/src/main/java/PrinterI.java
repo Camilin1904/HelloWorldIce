@@ -4,10 +4,9 @@ import com.zeroc.Ice.Current;
 
 import java.io.*;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PrinterI implements Demo.Printer{
 
@@ -17,20 +16,23 @@ public class PrinterI implements Demo.Printer{
         as it is not susceptible to corruption in a multithreaded environment
         and has a higher throughput than equivalents like HashTable
     */
+
+    private AtomicInteger inProgress = new AtomicInteger(0);
+    private AtomicInteger processed = new AtomicInteger(0);
     private Map<String, CallbackPrx> clients = new ConcurrentHashMap<>();
     public void printString(String s, CallbackPrx client, Current current){
 
         new Thread(()-> {
-
+            inProgress.addAndGet(1);
             String[] info = s.split(":", 3);
             String newClient = info[0] + ":" + info[1];
-
             clients.putIfAbsent(newClient, client);
-
+            inProgress.addAndGet(-1);
+            processed.addAndGet(1);
             String[] ans = processS(info[2]);
             System.out.println(info[0] + ":" + info[1] + ":" + ans[0]);
             System.out.println("\n");
-            client.callbackClient(new Response(0,(info[0] + ":" + info[1] + ":" + ans[0])));
+            client.callbackClient(new Response(0,(info[0] + ":" + info[1] + ":" + ans[1])));
         }).run();
     }
 
@@ -40,7 +42,7 @@ public class PrinterI implements Demo.Printer{
             if(n<=0) throw new java.lang.Exception();
             String fib = "";
             fib = seqFib(n);
-            String[] ret = {fib.strip(), primeFactors(n)};
+            String[] ret = {fib, primeFactors(n)};
             return ret;
         }
         catch(Throwable e){
@@ -68,6 +70,14 @@ public class PrinterI implements Demo.Printer{
             else if (s.startsWith("to ")){
                 s2 = s.split(" ",3);
                 clients.get(s2[1]).callbackClient(new Response(0, s2[2]));
+                s = "Message Sent";
+            }
+            else if (s.startsWith("BC")){
+                s2 = s.split(" ",2);
+                for(Map.Entry<String, CallbackPrx> client : clients.entrySet()){
+                    client.getValue().callbackClient(new Response(0, s2[1]));
+                }
+                s = "Message sent";
             }
         }
         catch (Exception e){
@@ -117,13 +127,6 @@ public class PrinterI implements Demo.Printer{
 
         }
         return end;
-    }
-
-
-    private int fibonacci(int n){
-        if(n<2) return 1;
-        else
-            return fibonacci(n-1) + fibonacci(n-2);
     }
 
     private String runCommand(String s) throws IOException{

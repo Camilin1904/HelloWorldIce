@@ -1,8 +1,10 @@
 import java.io.*;
+import java.util.Scanner;
 
 
 public class Server
 {
+    static Scanner scan = new Scanner(System.in);
     public static void main(String[] args)
     {
         java.util.List<String> extraArgs = new java.util.ArrayList<String>();
@@ -20,7 +22,10 @@ public class Server
             com.zeroc.Ice.Object object = new PrinterI();
             adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("SimplePrinter"));
             adapter.activate();
-            communicator.waitForShutdown();
+            while(true){
+                if(scan.nextLine().equals("exit"))
+                    communicator.shutdown();
+            }
         }
     }
 
