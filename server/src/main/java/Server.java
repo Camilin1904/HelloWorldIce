@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Server
 {
     static Scanner scan = new Scanner(System.in);
-    public static void main(String[] args)throws Exception
+    public static void main(String[] args)
     {
         java.util.List<String> extraArgs = new java.util.ArrayList<String>();
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -22,18 +22,13 @@ public class Server
             com.zeroc.Ice.Object object = new PrinterI(leftover, processed,jitter);
             adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("SimplePrinter"));
             adapter.activate();
-            
-            
             waitForShutdown(leftover, processed,jitter);
-        
-            
-            
             communicator.shutdown();
               
         }  
     }
 
-    private static void waitForShutdown(AtomicInteger leftover,AtomicInteger processed,Vector<Long> jitter)throws Exception{
+    private static void waitForShutdown(AtomicInteger leftover,AtomicInteger processed,Vector<Long> jitter){
         String s;
         System.out.println("Type exit to close the server");
             while (true) {
@@ -52,7 +47,7 @@ public class Server
                     "Unprocessed Rate: " + unprocessedRate + "%\n"+ 
                     "Jitter: " + calculateJitter(jitter));
                     
-                   throw new Exception("User interrupt");
+                   System.exit(0);
                 }
               
             
