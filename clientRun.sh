@@ -1,3 +1,12 @@
 #!/usr/bin/expect -f
 cd Documents/CarmonaLibrerosCallback
-java -jar client.jar <<< "10000"
+
+simulateClient(){
+    echo "10000"  
+    sleep 200
+    echo "exit"
+}
+
+simulateClient | java -jar client.jar
+
+ 
