@@ -97,6 +97,21 @@ public class PrinterI implements Demo.Printer{
         catch (Exception e){
             s = e.getMessage();
         }
+        finally{
+
+            int processedF = processed.intValue();
+            int unprocessed = inProgress.intValue();
+
+            int totalRequests = unprocessed + processedF;
+            double unprocessedRate = unprocessed/totalRequests;
+
+            s = "Statistics\n"+
+            "Total requests: " + totalRequests + "\n" +
+            "Processed requests: " + processedF + "\n"+
+            "Unprocessed requests: "+ unprocessed + "\n"+
+            "Unprocessed Rate: " + unprocessedRate + "%";
+
+        }
         String[] S = {s,s};
         return S;
     }

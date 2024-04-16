@@ -18,15 +18,10 @@ public class Server
             com.zeroc.Ice.Object object = new PrinterI(leftover, processed);
             adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("SimplePrinter"));
             adapter.activate();
-            if(extraArgs.isEmpty()) {
-
-                communicator.waitForShutdown();
-            }
-            else{
-
-            }
-
+            communicator.waitForShutdown();
         }
+
+
     }
 
     public static void f(String m)
