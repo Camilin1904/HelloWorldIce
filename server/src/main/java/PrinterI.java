@@ -14,6 +14,8 @@ public class PrinterI implements Demo.Printer{
 
     AtomicInteger inProgress;
     AtomicInteger processed;
+    Vector<Long> jitter = new Vector<>();
+
 
     /*
         Because of the need of accessibility to all clients from any other client
@@ -23,11 +25,13 @@ public class PrinterI implements Demo.Printer{
     */
     private Map<String, CallbackPrx> clients = new ConcurrentHashMap<>();
 
+
     private ExecutorService threadpool = Executors.newFixedThreadPool(6);
 
-    public PrinterI(AtomicInteger inProgress, AtomicInteger processed){
+    public PrinterI(AtomicInteger inProgress, AtomicInteger processed,Vector<Long> jitter){
         this.inProgress = inProgress;
         this.processed = processed;
+        this.jitter = jitter;
     }
     public void printString(String s, CallbackPrx client, Current current){
 
@@ -45,6 +49,7 @@ public class PrinterI implements Demo.Printer{
             System.out.println(info[0] + ":" + info[1] + ":" + ans[0]);
             System.out.println("\n");
             client.callbackClient(new Response(0,(info[0] + ":" + info[1] + ":" + ans[1] + ";Time:" + query[1])));
+            responseTime(query[1]);
         });
 
         threadpool.submit(task);
@@ -157,6 +162,14 @@ public class PrinterI implements Demo.Printer{
         }
         return out.toString();
     }
+
+    private void responseTime(String timeResponse){
+        long time = System.currentTimeMillis();
+        time = time - Long.parseLong(timeResponse);
+        jitter.add(time);
+    }
+
+
 
 
 }
