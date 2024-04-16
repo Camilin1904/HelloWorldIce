@@ -2,7 +2,7 @@
 # The client reads this property to create the reference to the
 # "hello" object in the server.
 #
-Printer.Proxy=SimplePrinter:tcp -p 10023
+Printer.Proxy=SimplePrinter:tcp -p 10022
 
 #
 # Uncomment to use the WebSocket transports instead.
@@ -14,4 +14,4 @@ Printer.Proxy=SimplePrinter:tcp -p 10023
 #
 Ice.Default.Host=10.147.19.109
 
-Callback.Endpoints=tcp -p 9098 -h 10.147.19.147
+Callback.Endpoints=tcp -p 9090 -h 10.147.19.147
